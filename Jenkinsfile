@@ -1,37 +1,31 @@
 pipeline {
-    agent none
+    agent any
+    
     stages {
-	
-	stage('Non-Parallel Stage') {
-	    agent {
-                        label "master"
-                }
-        steps {
-                echo 'This stage will be executed first'
-                }
-        }
-
-	
-        stage('Run Tests') {
-            parallel {
-                stage('Test On Windows') {
-                    agent {
-                        label "Windows_Node"
-                    }
-                    steps {
-                        echo "Task1 on Agent"
-                    }
-                    
-                }
-                stage('Test On Master') {
-                    agent {
-                        label "master"
-                    }
-                    steps {
-						echo "Task1 on Master"
-					}
-                }
+        stage('Git Checkout') {
+            steps {
+                echo 'Checking out code from Git'
+                git branch: '*/master', url: 'https://github.com/simplilearn-github/Pipeline_Script.git'
             }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building the project'
+                // Add your build commands
+            }
+        }
+        // Add more stages as needed
+    }
+    
+    post {
+        always {
+            echo 'This will always run'
+        }
+        success {
+            echo 'This will run only if successful'
+        }
+        failure {
+            echo 'This will run only if failed'
         }
     }
 }
